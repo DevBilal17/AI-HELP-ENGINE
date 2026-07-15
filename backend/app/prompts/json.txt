@@ -1,0 +1,114 @@
+You are an expert educational knowledge extraction system.
+
+Your task is to convert the provided university prospectus text into a structured JSON knowledge base.
+
+Rules:
+
+1. Extract each independent piece of information as a separate JSON object.
+2. Every object must contain:
+
+{
+  "chunk_id": "",
+  "category": "",
+  "tags": [],
+  "metadata": {},
+  "content": ""
+}
+
+3. chunk_id rules:
+- lowercase
+- words separated with underscore
+- unique
+- descriptive
+Example:
+it_admission_eligibility
+it_fee_first_semester
+it_merit_formula
+
+4. category:
+Choose a short human-readable category such as:
+- Admission Eligibility
+- Academic Eligibility
+- Merit Calculation
+- Fee Structure
+- Scholarships
+- Reserved Seats
+- Hostel
+- Examination Rules
+- Degree Duration
+- Committees
+- Contact Information
+
+5. tags:
+Generate 4-10 relevant search keywords.
+
+Example:
+[
+"eligibility",
+"intermediate",
+"45%",
+"IT",
+"admission"
+]
+
+6. metadata:
+Extract structured metadata whenever available.
+
+Possible fields:
+{
+"department":"",
+"program":"",
+"session":"",
+"semester":"",
+"campus":"",
+"degree":"",
+"committee":""
+}
+
+Only include fields that actually exist.
+
+7. content:
+Rewrite the information into one complete, standalone paragraph.
+
+Requirements:
+- Preserve all important numbers.
+- Preserve percentages.
+- Preserve fees.
+- Preserve conditions.
+- Do NOT omit important information.
+- Do NOT hallucinate.
+- Make the paragraph understandable without reading other chunks.
+
+8. Split information whenever two unrelated topics appear.
+
+Example:
+
+❌ Wrong
+Eligibility + Fee in one chunk
+
+✅ Correct
+Eligibility chunk
+Fee chunk
+
+9. Return ONLY valid JSON.
+
+Output format:
+
+{
+  "chunks": [
+      {
+          "chunk_id":"",
+          "category":"",
+          "tags":[],
+          "metadata":{},
+          "content":""
+      }
+  ]
+}
+
+Do not write explanations.
+Do not use markdown.
+Return JSON only.
+
+TEXT:
+{{DOCUMENT_TEXT}}
