@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { Trash2, FolderMinus, Database, Loader, CheckSquare, Square } from "lucide-react";
+import { Trash2, FolderMinus, Database, Loader, CheckSquare, Square, Search } from "lucide-react";
 import ITHelpDeskWidget from "../widget/ChatWidget";
 
 const Chroma = () => {
@@ -10,6 +10,9 @@ const Chroma = () => {
   
   // Track selected document IDs
   const [selectedDocIds, setSelectedDocIds] = useState([]);
+
+  //  1. Search Query State
+  const [searchQuery, setSearchQuery] = useState("");
 
   const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
@@ -153,17 +156,55 @@ const Chroma = () => {
     }
   };
 
+  //  2. SEARCH FILTER LOGIC
+
+  const filteredCollections = collections.map((col) => {
+    const filteredDocs = col.documents.filter((doc) => {
+      const query = searchQuery.toLowerCase().trim();
+      if (!query) return true; 
+
+      const matchId = doc.id?.toLowerCase().includes(query);
+      const matchDoc = doc.document?.toLowerCase().includes(query);
+      const matchMetadata = JSON.stringify(doc.metadata || {})
+        .toLowerCase()
+        .includes(query);
+
+      return matchId || matchDoc || matchMetadata;
+    });
+
+    return {
+      ...col,
+      documents: filteredDocs,
+    };
+  });
+
   return (
     <div className="p-6 text-gray-200 bg-[#0B0F19] min-h-screen">
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-10 px-3">
-        <Database className="text-indigo-500" size={32} />
-        <div>
-          <h1 className="text-3xl font-semibold text-gray-100">ChromaDB Admin Panel</h1>
-          <p className="text-xs text-gray-400 mt-1">
-            Manage your vector database collections and view embedded document chunks.
-          </p>
+      {/* Header & Search Area */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10 px-3">
+        <div className="flex items-center gap-3">
+          <Database className="text-indigo-500" size={32} />
+          <div>
+            <h1 className="text-3xl font-semibold text-gray-100">ChromaDB Admin Panel</h1>
+            <p className="text-xs text-gray-400 mt-1">
+              Manage your vector database collections and view embedded document chunks.
+            </p>
+          </div>
         </div>
+
+        {/*  3. Search Bar UI Input */}
+        {!loading && !error && collections.length > 0 && (
+          <div className="relative w-full md:w-80">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
+            <input
+              type="text"
+              placeholder="Search content, ID or metadata..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-[#111827] border border-gray-800 rounded-full pl-10 pr-4 py-2.5 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-indigo-500/80 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+            />
+          </div>
+        )}
       </div>
 
       {loading && (
@@ -189,7 +230,8 @@ const Chroma = () => {
               <p className="text-gray-500 text-sm">No active collections found.</p>
             </div>
           ) : (
-            collections.map((col) => {
+            //  4. Render the dynamically filtered collections
+            filteredCollections.map((col) => {
               // Calculate selection checks for "Select All"
               const colDocIds = col.documents.map((d) => d.id);
               const selectedInThisCol = selectedDocIds.filter((id) => colDocIds.includes(id));
@@ -202,11 +244,17 @@ const Chroma = () => {
                   <div className="p-5 border-b border-gray-800 flex justify-between items-center bg-gray-900/50">
                     <div className="flex items-center gap-2">
                       <span className="text-indigo-400 text-sm">📦</span>
-                      <h3 className="text-lg font-semibold text-gray-200">Collection: {col.name}</h3>
+                      <h3 className="text-lg font-semibold text-gray-200">
+                        Collection: {col.name} 
+                        {/*  Optional Count Tag */}
+                        <span className="text-xs bg-indigo-950 text-indigo-400 border border-indigo-900 px-2 py-0.5 rounded-full ml-3">
+                          {col.documents.length} chunks
+                        </span>
+                      </h3>
                     </div>
                     
                     <div className="flex items-center gap-3">
-                      {/* Bulk Delete Button - only enabled when items inside this collection are selected */}
+                      {/* Bulk Delete Button */}
                       {selectedInThisCol.length > 0 && (
                         <button
                           onClick={() => handleBulkDelete(col.name, col.documents)}
@@ -230,7 +278,9 @@ const Chroma = () => {
                   {/* Table */}
                   <div className="overflow-x-auto">
                     {col.documents.length === 0 ? (
-                      <div className="p-6 text-center text-gray-500 text-xs">This collection is empty.</div>
+                      <div className="p-6 text-center text-gray-500 text-xs">
+                        {searchQuery ? "No matches found for your search." : "This collection is empty."}
+                      </div>
                     ) : (
                       <table className="min-w-full divide-y divide-gray-800">
                         <thead className="bg-[#1F2937]/30 text-left text-xs text-gray-400 font-medium uppercase tracking-wider">
@@ -313,8 +363,6 @@ const Chroma = () => {
           )}
         </div>
       )}
-
-
 
       <ITHelpDeskWidget />
     </div>
