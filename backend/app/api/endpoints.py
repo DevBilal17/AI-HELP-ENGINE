@@ -32,8 +32,8 @@ class LocalJsonIngestRequest(BaseModel):
 
 
 
-@router.post("/process-prospectus", response_model=APIResponse)
-async def process_prospectus(file: UploadFile = File(...)):
+@router.post("/process-document", response_model=APIResponse)
+async def process_document(file: UploadFile = File(...)):
     # Ensure upload directory exists
     os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
     file_path = os.path.join(settings.UPLOAD_DIR, file.filename)
@@ -95,7 +95,7 @@ async def process_prospectus(file: UploadFile = File(...)):
         if os.path.exists(file_path):
             os.remove(file_path)
             
-        print(f"Error in /process-prospectus: {str(e)}")
+        print(f"Error in /process-document: {str(e)}")
         return APIResponse(
             success=False,
             message="Failed to structure and embed document.",

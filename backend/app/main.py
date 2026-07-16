@@ -2,6 +2,7 @@
 from fastapi import FastAPI
 from app.api.endpoints import router as api_router
 from app.api.admin import router as admin_router
+from app.api.chroma import router as chroma_router
 from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI(
     title="AI HELP ENGINE", 
@@ -22,6 +23,8 @@ app.add_middleware(
 app.include_router(api_router, prefix="/api")
 
 app.include_router(admin_router, prefix="/admin")
+
+app.include_router(chroma_router,prefix="/chroma")
 
 @app.get("/")
 def root():

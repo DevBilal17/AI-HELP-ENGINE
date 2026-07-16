@@ -12,7 +12,7 @@ const Dashboard = () => {
         <h1 className="text-white text-4xl font-semibold">
           <span className="inline-block animate-wave origin-[70%_70%]">👋</span>{" "}
           Welcome back to{" "}
-          <span className="text-indigo-500">Virtual HelpDesk</span>
+          <span className="text-indigo-500">AI Help Engine</span>
         </h1>
 
         {/* Upload Document Button */}

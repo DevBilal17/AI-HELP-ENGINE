@@ -5,6 +5,7 @@ import {
   Database,
   SidebarClose,
   SidebarOpen,
+  CloudUpload,
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { FaRobot } from "react-icons/fa";
@@ -23,10 +24,15 @@ const Sidebar = () => {
       path: "/",
     },
     {
-      name: "Data Management",
-      icon: Database,
+      name: "Upload Document",
+      icon: CloudUpload,
       path: "/upload-document",
     },
+    {
+      name : "Chroma Data",
+      icon : Database,
+      path : "/chroma-db"
+    }
   ];
 
   // ================= ACTIVE TAB CHECKER =================
@@ -66,7 +72,7 @@ const Sidebar = () => {
         {!isSidebarCollapsed ? (
           <div className="flex flex-col items-center">
             <h1 className="text-white text-lg font-semibold">
-              Virtual <span className="text-indigo-500">HELPDESK</span>
+              AI <span className="text-indigo-500">HELP ENGINE</span>
             </h1>
             <p className="text-gray-300 text-[10px] text-center">
               ADMIN DASHBOARD

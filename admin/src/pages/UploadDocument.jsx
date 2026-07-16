@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { UploadCloud, FileText, ChevronRight } from "lucide-react";
+import { UploadCloud, FileText } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const UploadDocument = () => {
@@ -19,17 +19,17 @@ const UploadDocument = () => {
     "application/msword",
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 
-    // Excel
-    "application/vnd.ms-excel",
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    // // Excel
+    // "application/vnd.ms-excel",
+    // "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 
     // TXT
     "text/plain",
 
     // CSV
-    "text/csv",
-    "application/csv",
-    "application/vnd.ms-excel", // sometimes csv comes with this mimetype
+    // "text/csv",
+    // "application/csv",
+    // "application/vnd.ms-excel", // sometimes csv comes with this mimetype
   ];
 
   // ================= HANDLE FILE PICK =================
@@ -39,7 +39,7 @@ const UploadDocument = () => {
     if (!file) return;
 
     if (!allowedTypes.includes(file.type)) {
-      toast.error("Only pdf, doc, docx, xls, xlsx, txt, csv files are allowed");
+      toast.error("Only pdf, doc, docx and txt files are allowed");
       return;
     }
 
@@ -64,7 +64,47 @@ const UploadDocument = () => {
   };
 
   // ================= UPLOAD FILE =================
-  const handleUploadFile = async () => {}; // Needs to be completed
+  const handleUploadFile = async () => {
+    if (!selectedFile) {
+      toast.error("Please select a file first");
+      return;
+    }
+
+    setUploadFileLoading(true);
+    setUploadFileError(null);
+
+    // 1. Create a FormData instance
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+
+    try {
+      
+      const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/process-document`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.detail || "Something went wrong during the upload.");
+      }
+
+      toast.success("File uploaded successfully!");
+      
+
+      setSelectedFile(null);
+      setPreviewProgress(0);
+
+
+
+    } catch (error) {
+      setUploadFileError(error.message);
+      toast.error(error.message || "Failed to connect to the server.");
+    } finally {
+      setUploadFileLoading(false);
+    }
+  }; 
 
   return (
     <div className="p-3">
@@ -74,7 +114,7 @@ const UploadDocument = () => {
           Upload a new File
         </h1>
         <p className="text-xs text-gray-400">
-          You can upload and add PDF, DOC, DOCX, XLS, XLSX, TXT, CSV files and
+          You can upload and add PDF, DOC, DOCX, TXT files and
           the file size should not exceed 10MB.
         </p>
       </div>
@@ -84,7 +124,7 @@ const UploadDocument = () => {
         {/* ================= FILE UPLOAD SECTION ================= */}
         <div className="border-2 border-dashed border-gray-600 rounded-lg p-6 flex flex-col gap-5">
           <p className="text-sm text-gray-400">
-            Upload PDF, DOC, DOCX, XLS, XLSX, TXT, CSV files only. Maximum size:
+            Upload PDF, DOC, DOCX, TXT files only. Maximum size:
             10MB
           </p>
 
@@ -119,10 +159,15 @@ const UploadDocument = () => {
         <div className="">
           <button
             onClick={handleUploadFile}
+            disabled={uploadFileLoading}
             className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-60"
           >
-            Upload File
+            {uploadFileLoading ? "Uploading..." : "Upload File"}
           </button>
+          
+          {uploadFileError && (
+            <p className="text-xs text-red-500 mt-2">{uploadFileError}</p>
+          )}
         </div>
       </div>
     </div>

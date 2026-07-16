@@ -398,77 +398,104 @@ hover:-translate-y-1
           </div>
 
           {/* Input Panel with Voice Microphone */}
-          <form
-            onSubmit={handleSendMessage}
-            className="p-3 border-t border-slate-100 bg-white flex items-center space-x-2"
-          >
-            <div className="relative flex-1 flex items-center">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder={isListening ? "Listening..." : placeholder}
-                className={`w-full border rounded-full pl-4 pr-11 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition ${
-                  isListening
-                    ? "border-rose-400 bg-rose-50/20 placeholder-rose-400"
-                    : "border-slate-200"
-                }`}
-                disabled={isLoading}
-              />
+       <form
+  onSubmit={handleSendMessage}
+  className="p-3 border-t border-slate-100 bg-white flex items-center space-x-2"
+  style={{ padding: "12px", display: "flex", alignItems: "center", gap: "8px" }} // Tailwind fallback
+>
+  <div className="relative flex-1 flex items-center" style={{ flex: 1, position: "relative" }}>
+    <input
+      type="text"
+      value={input}
+      onChange={(e) => setInput(e.target.value)}
+      placeholder={isListening ? "Listening..." : placeholder}
+      className={`w-full border rounded-full pl-4 pr-11 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition ${
+        isListening
+          ? "border-rose-400 bg-rose-50/20 placeholder-rose-400"
+          : "border-slate-200"
+      }`}
+      disabled={isLoading}
+   
+      style={{
+        paddingTop: "10px",
+        paddingBottom: "10px",
+        paddingLeft: "16px",
+        paddingRight: "44px",
+        boxSizing: "border-box"
+      }}
+    />
 
-              {/* Voice Mic Button */}
-              <button
-                type="button"
-                onClick={toggleListening}
-                className={`absolute right-2 p-1.5 rounded-full transition-all duration-200 ${
-                  isListening
-                    ? "bg-rose-500 text-white animate-pulse"
-                    : "text-slate-400 hover:text-indigo-600 hover:bg-slate-50"
-                }`}
-                title={isListening ? "Stop listening" : "Speak to write"}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
-                  />
-                </svg>
-              </button>
-            </div>
+    {/* Voice Mic Button */}
+    <button
+      type="button"
+      onClick={toggleListening}
+      className={`absolute right-2 p-1.5 rounded-full transition-all duration-200 ${
+        isListening
+          ? "bg-rose-500 text-white animate-pulse"
+          : "text-slate-400 hover:text-indigo-600 hover:bg-slate-50"
+      }`}
+      title={isListening ? "Stop listening" : "Speak to write"}
+      style={{
+        position: "absolute",
+        right: "8px",
+        padding: "6px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center"
+      }}
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-5 w-5"
+        style={{ width: "20px", height: "20px" }}
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
+        />
+      </svg>
+    </button>
+  </div>
 
-            {/* Send Button */}
-            <button
-              type="submit"
-              disabled={isLoading || !input.trim()}
-              className=" text-white rounded-full p-2.5 disabled:opacity-40 transition shadow-md active:scale-95"
-              style={{
-                backgroundColor: primaryColor,
-              }}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 transform rotate-90"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-                />
-              </svg>
-            </button>
-          </form>
+  {/* Send Button */}
+  <button
+    type="submit"
+    disabled={isLoading || !input.trim()}
+    className="text-white rounded-full p-2.5 disabled:opacity-40 transition shadow-md active:scale-95"
+
+    style={{
+      backgroundColor: primaryColor,
+      padding: "10px",
+      minWidth: "40px",
+      minHeight: "40px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      borderRadius: "9999px"
+    }}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-5 w-5 transform "
+      style={{ width: "20px", height: "20px", transform: "rotate(90deg)" }}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+      />
+    </svg>
+  </button>
+</form>
         </div>
       )}
     </div>
